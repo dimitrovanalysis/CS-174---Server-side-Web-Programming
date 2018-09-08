@@ -1,0 +1,166 @@
+
+<html>
+<head>
+	<title>Homework #3</title>
+	<style type="text/css"> 
+		.box{
+			margin-top: 50px;
+		}
+		h1{
+			font-size: 35px;
+		}
+	</style>
+
+</head>
+    
+<body>
+	<div>
+		<h1 align="middle">Enter URL for Trucking List JSON File</h1>
+	</div>
+
+	<div align="center" class="box">
+	   <input type="Files" name="URL" id="myFile" value="truckinglist.json"  >
+	</div>
+    
+	<div align="center" class="box">
+		<button name="button" onclick="on_click()">Submit Query</button>
+	</div>
+
+	<script>
+        
+		 var button1 = false;
+		 var errorcheck = false;
+        
+        function loadJSON(url)
+        {
+		 	var xmlhttp = new XMLHttpRequest();
+		 	xmlhttp.open("Get",url, false); 
+		 	try
+            {
+		 		xmlhttp.send();
+		 	}
+             
+            catch(err)
+            {
+		 		alert("The file does not exist");
+		 	};
+		 	
+             if(xmlhttp.status == 404)
+             {
+		 		alert("the file does not exist");
+		 	}
+             else
+             {
+		 		return JSON.parse(xmlhttp.responseText);
+		 	}
+		}
+        
+		function generateHTML(jsonDoc)
+        {
+			root = jsonDoc.documentElement; 
+			var html_text;
+			html_text = "<html><head><title>JSON Parse Result</title></head><body>";
+			html_text += "<table border = '2'>";
+			html_text += "<tbody>";
+
+			firstrow = jsonDoc.Mainline.Table.Header.Data;
+			html_text += "<tr>";
+            
+			for(i = 0; i<firstrow.length;i++)
+            {
+			  	html_text += "<td align='middle'> <b>"+firstrow[i]+" </b> </td>";
+			}
+			html_text += "</tr>"
+			
+		    truck = jsonDoc.Mainline.Table.Row;
+		    if(typeof(truck)=="undefined") return null; //error catching
+		    	
+	    	for(j = 0; j<truck.length;j++)
+            {
+			trunkList = truck[j];  
+			html_text += "<tr>";
+			keyobject = Object.keys(trunkList);
+			 for(k = 0; k<keyobject.length;k++)
+             {
+				myKeyObject = keyobject[k];
+				if(keyobject[k] == "Hubs")
+                {
+					html_text += "<td>"
+					three_colume = trunkList.Hubs.Hub;
+					html_text += "<ul>";
+
+					for(h = 0;h< three_colume.length;h++)
+                    {
+						if (h==0)
+                        {
+							html_text += "<li><b>"+ three_colume[h] +"</b></li>";
+						}
+                        else
+                        {
+							 html_text += "<li>" +three_colume[h]+"</li>";
+						}
+					}		
+		
+					html_text += "</ul>";
+					html_text += "</td>";
+				}
+                 else if(keyobject[k] == "HomePage")
+                 {
+					html_text += "<td><a href='"+ trunkList[myKeyObject]+"'>"+trunkList[myKeyObject]+"</a></td>";
+				}
+                 else if(keyobject[k] == "Logo")
+                 {
+					html_text += "<td><img src='"+ trunkList[myKeyObject]+"'width='320' height='120'></td>";
+				}
+                 else
+                {
+					html_text += "<td>" +trunkList[myKeyObject]+"</td>";
+				}
+			}
+                
+			html_text += "</tr>";
+                
+		   }
+            
+			html_text += "</tbody>";
+            html_text += "</table>";
+            html_text += "</body></html>";
+            
+            return html_text;
+            
+		}
+        
+		 function on_click()
+        {
+		 	button1 = true;
+		 	var file = document.getElementById("myFile");
+		 	//error checking
+            
+		 	if(file.value == "")
+            {
+		 		alert("error, please enter a valid json file");
+		 	}
+            
+		 	var jsonDoc;
+			
+			jsonDoc = loadJSON(file.value);
+			var html_text = generateHTML(jsonDoc);
+			if(html_text == null){
+				alert("no info given");
+				return;
+			}
+            
+			hWin = window.open("","Assignment3","height = 700, width=700");
+			hWin.document.write(html_text);
+			hWin.document.close();
+				
+		}
+		 
+
+
+	</script>
+    
+</body>
+    
+    
+</html>

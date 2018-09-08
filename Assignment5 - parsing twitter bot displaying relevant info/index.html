@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Twitter API</title>
+</head>
+<body>
+
+    <button name="button" id="getAll">
+      Get All tweets
+    </button>
+    &nbsp;
+    &nbsp;
+    <button name="button" id="getUsers">
+      Get All users
+    </button>
+
+    <view>
+
+    </view>
+
+
+    <!-- SCRIPTS -->
+    <script type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
+    </script>
+
+    <script type="text/javascript">
+
+      /**
+       * Gets all Tweets
+       */
+      let readAllTweets = function(view) {
+
+        $.getJSON('/tweet', (data) => {
+
+          var ul = document.createElement("ul");
+
+          data.forEach((o) => {
+            let li = document.createElement("li");
+            str = o.text + "<br>" + "-" + o.author;
+            li.innerHTML = str;
+            ul.appendChild(li);
+          });
+
+          view.appendChild(ul);
+        });
+
+      };
+
+      /**
+       * Gets all Users
+       */
+      let readAllUsers = function(view) {
+
+        $.getJSON('/user', (data) => {
+
+          var ul = document.createElement("ul");
+          data.forEach((o) => {
+            let li = document.createElement("li");
+            str = o;
+            li.innerHTML = str;
+            ul.appendChild(li);
+          });
+
+          view.appendChild(ul);
+        });
+
+      };
+
+
+      // == main ==
+      let view = document.querySelector('view');
+      let getAll = document.querySelector('#getAll');
+      getAll.addEventListener('click', () => {
+          
+        readAllTweets(view);
+      });
+      let getUsers = document.querySelector("#getUsers");
+      getUsers.addEventListener('click', () => {
+        readAllUsers(view);
+      });
+
+
+    </script>
+
+</body>
+
+
+</html>
